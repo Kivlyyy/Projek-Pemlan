@@ -8,7 +8,7 @@ public class Customer {
      protected List<Menu> orders;
      protected int capacityNeeded;
      protected boolean isRunaway;
-     protected double tipPercentage; 
+     private double tipPercentage; 
 
      public Customer() {
           this.orders = new ArrayList<>();
