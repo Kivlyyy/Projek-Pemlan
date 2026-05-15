@@ -90,24 +90,36 @@ public class GameEngine {
           * @param choice 1=Charming, 2=Security, 3=Cleaner
           * @return pesan hasil transaksi untuk ditampilkan GUI
           */
-     public String buyAmulet(int choice) {
-          double amuletCost = 50.0;
-          if (restaurant.getMoney() < amuletCost) {
-               return "Uang tidak cukup untuk membeli jimat! (Harga: $" + amuletCost + ")";
-          }
+public String buyAmulet(int choice) {
+    double amuletCost = 50.0;
+    if (restaurant.getMoney() < amuletCost) {
+        return "Uang tidak cukup untuk membeli jimat! (Harga: $" + amuletCost + ")";
+    }
 
-          Amulet bought = amuletShop.buyAmulet(choice);
-          restaurant.addAmulet(bought);
-          
-          if (bought == null) {
-               return "Pilihan jimat tidak valid.";
-          }
+    Amulet bought = amuletShop.buyAmulet(choice);
+    if (bought == null) {
+        return "Pilihan jimat tidak valid.";
+    }
 
-          restaurant.deductMoney(amuletCost);
-          return "Berhasil membeli " + bought.getName()
-               + " (efek " + String.format("%.1f", bought.getEffectPercentage()) + "%)."
-               + " Uang tersisa: $" + String.format("%.2f", restaurant.getMoney());
-     }
+    // jika jimat jenis sama sudah ada, replace (override) bukan tambah
+    List<Amulet> activeAmulets = restaurant.getActiveAmulets();
+    for (int i = 0; i < activeAmulets.size(); i++) {
+        if (activeAmulets.get(i).getClass().equals(bought.getClass())) {
+            activeAmulets.set(i, bought); // replace jimat lama dengan yang baru
+            restaurant.deductMoney(amuletCost);
+            return "Jimat " + bought.getName() + " di-upgrade!"
+                + " Efek baru: " + String.format("%.1f", bought.getEffectPercentage()) + "%."
+                + " Uang tersisa: $" + String.format("%.2f", restaurant.getMoney());
+        }
+    }
+
+    // jika belum ada jimat jenis ini, tambahkan baru
+    restaurant.deductMoney(amuletCost);
+    restaurant.addAmulet(bought);
+    return "Berhasil membeli " + bought.getName()
+        + " (efek " + String.format("%.1f", bought.getEffectPercentage()) + "%)."
+        + " Uang tersisa: $" + String.format("%.2f", restaurant.getMoney());
+}
 
      /**
           * Upgrade kapasitas restoran.
@@ -160,7 +172,7 @@ public class GameEngine {
      public void triggerDisasters() {
          Random rand = new Random();
      
-         if (rand.nextDouble() > 0.40) return;
+         if (rand.nextDouble() > 0.30) return;
      
          int disasterCount = 1 + rand.nextInt(3);
      
