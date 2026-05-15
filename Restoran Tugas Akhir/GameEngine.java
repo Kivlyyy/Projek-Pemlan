@@ -130,7 +130,7 @@ public class GameEngine {
      // ============================================================
 
      private void runSellingPhase() {
-          triggerDisasters();
+          
 
           List<Customer> incomingCustomers = generateCustomers();
           DiningArea diningArea = restaurant.getDiningArea();
@@ -143,6 +143,7 @@ public class GameEngine {
                     break;
                }
           }
+          triggerDisasters();
 
           List<Menu> availableMenus = getAvailableMenus();
           diningArea.processOrders(restaurant, availableMenus);
