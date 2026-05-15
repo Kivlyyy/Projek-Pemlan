@@ -157,19 +157,22 @@ public class GameEngine {
           * Dipanggil otomatis saat fase berjualan dimulai.
           */
      public void triggerDisasters() {
-          Random rand = new Random();
-          int disasterCount = 1 + rand.nextInt(3);
-
-          for (int i = 0; i < disasterCount; i++) {
-               Disaster disaster;
-               if (rand.nextBoolean()) {
-                    disaster = new RunawayCustomerDisaster(0.3 + rand.nextDouble() * 0.4);
-               } else {
-                    double loss = 0.1 + rand.nextDouble() * 0.3;
-                    disaster = new HungryRatDisaster(0.5, loss);
-               }
-               disaster.trigger(restaurant);
-          }
+         Random rand = new Random();
+     
+         if (rand.nextDouble() > 0.20) return;
+     
+         int disasterCount = 1 + rand.nextInt(3);
+     
+         for (int i = 0; i < disasterCount; i++) {
+             Disaster disaster;
+             if (rand.nextBoolean()) {
+                 disaster = new RunawayCustomerDisaster(0.3 + rand.nextDouble() * 0.4);
+             } else {
+                 double loss = 0.1 + rand.nextDouble() * 0.3;
+                 disaster = new HungryRatDisaster(0.5, loss);
+             }
+             disaster.trigger(restaurant);
+         }
      }
 
      // ============================================================
