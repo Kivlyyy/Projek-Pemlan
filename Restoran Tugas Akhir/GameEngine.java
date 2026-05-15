@@ -160,7 +160,7 @@ public class GameEngine {
      public void triggerDisasters() {
          Random rand = new Random();
      
-         if (rand.nextDouble() > 0.20) return;
+         if (rand.nextDouble() > 0.40) return;
      
          int disasterCount = 1 + rand.nextInt(3);
      
