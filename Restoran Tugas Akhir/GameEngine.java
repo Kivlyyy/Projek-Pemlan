@@ -90,6 +90,33 @@ public class GameEngine {
           * @param choice 1=Charming, 2=Security, 3=Cleaner
           * @return pesan hasil transaksi untuk ditampilkan GUI
           */
+
+public String setMenuPrice(int menuIndex, double newPrice) {
+    Menu m = menuCatalog.getMenuByChoice(menuIndex + 1);
+    if (m == null) return "Menu tidak ditemukan.";
+
+    double totalIngredientCost = 0;
+    Ingredient[] ingredients = m.getIngredients();
+    int[] quantities = m.getQuantities();
+    for (int i = 0; i < ingredients.length; i++) {
+        totalIngredientCost += ingredients[i].getPrice() * quantities[i];
+    }
+
+    m.setPrice(newPrice);
+
+    // peringatan berdasarkan harga
+    if (newPrice < totalIngredientCost) {
+        return "RUGI! Harga $" + String.format("%.2f", newPrice)
+            + " di bawah modal $" + String.format("%.2f", totalIngredientCost);
+    } else if (newPrice > 25000) {
+        return "PERINGATAN! Harga terlalu mahal, banyak pelanggan akan skip menu ini."
+            + " Profit per porsi: $" + String.format("%.2f", newPrice - totalIngredientCost);
+    } else {
+        return "Harga " + m.getName() + " → $" + String.format("%.2f", newPrice)
+            + ". Profit per porsi: $" + String.format("%.2f", newPrice - totalIngredientCost);
+    }
+}
+
 public String buyAmulet(int choice) {
     double amuletCost = 50.0;
     if (restaurant.getMoney() < amuletCost) {
@@ -100,6 +127,7 @@ public String buyAmulet(int choice) {
     if (bought == null) {
         return "Pilihan jimat tidak valid.";
     }
+     
 
     // jika jimat jenis sama sudah ada, replace (override) bukan tambah
     List<Amulet> activeAmulets = restaurant.getActiveAmulets();
