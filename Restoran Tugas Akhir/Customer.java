@@ -40,18 +40,28 @@ public class Customer {
           }
      }
 
-     public void handleOutOfStock(Menu menu) {
-          Random rand = new Random();
-          System.out.println("Maaf, pesanan " + menu.getName() + " sedang habis bahannya.");
-          
-          orders.remove(menu); 
-          
-          if (rand.nextBoolean()) {
-               System.out.println("Pelanggan kecewa dan membatalkan pesanan tersebut.");
-          } else {
-               System.out.println("Pelanggan maklum dan akan memilih menu lain (jika ada pesanan lain).");
-          }
-     }
+    public void handleOutOfStock(Menu menu, List<Menu> availableMenus) {
+        orders.remove(menu);
+        Random rand = new Random();
+    
+        if (rand.nextBoolean()) {
+            // pelanggan pergi, tidak ganti menu
+            System.out.println("Pelanggan kecewa dan membatalkan pesanan " + menu.getName());
+        } else {
+            // pelanggan mau ganti menu lain yang tersedia
+            List<Menu> otherMenus = new ArrayList<>(availableMenus);
+            otherMenus.remove(menu); // hapus menu yang habis dari pilihan
+    
+            if (!otherMenus.isEmpty()) {
+                Menu replacement = otherMenus.get(rand.nextInt(otherMenus.size()));
+                orders.add(replacement);
+                System.out.println("Pelanggan mengganti pesanan dengan: " + replacement.getName());
+            } 
+            else {
+                System.out.println("Tidak ada menu lain yang tersedia, pelanggan membatalkan.");
+            }
+        }
+    }
 
      public void applyCharmingAmulet(double amuletEffectPercentage) {
           this.tipPercentage += amuletEffectPercentage;
