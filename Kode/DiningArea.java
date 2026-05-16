@@ -47,7 +47,8 @@ public boolean admitCustomer(Customer customer) throws CapacityFullException {
                     for (Menu m : customer.getOrders()) {
                          try {
                          kitchen.cook(m);
-                         } catch (Exception e) {
+                         } 
+                         catch (Exception e) {
                          
                          }
                     }
@@ -62,7 +63,8 @@ public boolean admitCustomer(Customer customer) throws CapacityFullException {
                     try {
                          kitchen.cook(m);
                          customerBill += m.getPrice();
-                    } catch (OutOfStockException e) {
+                    } 
+                    catch (OutOfStockException e) {
                          System.out.println(e.getMessage());
                          customer.handleOutOfStock(m, availableMenus);
                     }
@@ -73,9 +75,9 @@ public boolean admitCustomer(Customer customer) throws CapacityFullException {
                     
                     for (Amulet amulet : restaurant.getActiveAmulets()) {
                          if (amulet instanceof CharmingAmulet) {
-                         amulet.applyEffect();
-                         payment += (payment * (amulet.getEffectPercentage() / 100.0));
-                         break;
+                              amulet.applyEffect();
+                              payment += (payment * (amulet.getEffectPercentage() / 100.0));
+                              break;
                          }
                     }
 
@@ -88,7 +90,6 @@ public boolean admitCustomer(Customer customer) throws CapacityFullException {
           System.out.println("Total Pendapatan Sesi Ini: Rp." + String.format("%.2f", totalIncome));
      }
 
-     // Method baru untuk memproses pesanan per pelanggan (Visual Novel Style)
      public void processSingleCustomerOrder(Restaurant restaurant, Customer customer, List<Menu> availableMenus) {
           Kitchen kitchen = restaurant.getKitchen();
           double customerBill = 0;
@@ -98,7 +99,8 @@ public boolean admitCustomer(Customer customer) throws CapacityFullException {
           if (customer.isRunaway()) {
                System.out.println("BENCANA! Pelanggan kabur tidak mau membayar pesanan!");
                for (Menu m : customer.getOrders()) {
-                    try { kitchen.cook(m); } catch (Exception e) {}
+                    try { kitchen.cook(m); } 
+                    catch (Exception e) {}
                }
                return; 
           }
@@ -127,7 +129,7 @@ public boolean admitCustomer(Customer customer) throws CapacityFullException {
                }
 
                restaurant.addMoney(payment);
-               System.out.println("💰 Pelanggan membayar: Rp." + String.format("%.2f", payment));
+               System.out.println("Pelanggan membayar: Rp." + String.format("%.2f", payment));
           }
           System.out.println("---------------------------------");
      }
