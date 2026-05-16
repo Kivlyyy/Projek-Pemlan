@@ -22,6 +22,10 @@ public abstract class Menu implements Isellable {
      public double getPrice() { 
           return price; 
      }
+
+     public void setPrice(double newPrice) {
+         this.price = newPrice;
+     }
      
      public Ingredient[] getIngredients() { 
           return ingredients; 
