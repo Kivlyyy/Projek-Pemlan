@@ -13,32 +13,26 @@ import javax.swing.*;
 
 public class GameGUI extends JFrame {
     private GameEngine engine;
-    
-    // Panel dan Layout Utama
+
     private JPanel mainPanel;
     private CardLayout mainCardLayout;
     
-    // Panel dan Layout Ruangan
     private JPanel roomPanel;
     private CardLayout roomCardLayout;
     private String currentRoom = "MainMenu";
     
-    // Panel Custom Background untuk Transisi Bencana
     private BackgroundPanel diningBgPanel;
     private BackgroundPanel kitchenBgPanel;
     
-    // Komponen UI Ingame
     private JLabel statusLabel;
     private JPanel actionPanel;
     private JPanel navPanel;
     private JPanel tableGridPanel;
     
-    // Sistem Visual Novel Dialog Box (Overlay)
     private JPanel dialoguePanel;
     private JLabel dialogueText;
     private Queue<String> messageQueue = new LinkedList<>();
     
-    // Variabel state untuk Meja & Jimat
     private int currentOccupiedSeats = 0;
     private List<Amulet> ownedAmulets = new ArrayList<>();
     private List<Amulet> equippedAmulets = new ArrayList<>();
@@ -53,8 +47,7 @@ public class GameGUI extends JFrame {
         
         mainCardLayout = new CardLayout();
         mainPanel = new JPanel(mainCardLayout);
-        
-        // Layar Utama
+
         mainPanel.add(createMainMenu(), "MainMenu");
         mainPanel.add(createGameScreen(), "GameScreen");
         
@@ -140,7 +133,6 @@ public class GameGUI extends JFrame {
         statusLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         gamePanel.add(statusLabel, BorderLayout.NORTH);
         
-        // PENGGUNAAN OVERLAY LAYOUT AGAR DIALOG MELAYANG DI ATAS BACKGROUND
         JPanel centerOverlay = new JPanel() {
             @Override
             public boolean isOptimizedDrawingEnabled() {
@@ -149,7 +141,6 @@ public class GameGUI extends JFrame {
         };
         centerOverlay.setLayout(new OverlayLayout(centerOverlay));
         
-        // 1. Layer Dialog (Di Atas)
         JPanel dialogLayer = new JPanel(new BorderLayout());
         dialogLayer.setOpaque(false);
         
@@ -159,7 +150,7 @@ public class GameGUI extends JFrame {
             BorderFactory.createLineBorder(new Color(139, 69, 19), 6), 
             BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
-        dialoguePanel.setPreferredSize(new Dimension(1100, 140)); // Tinggi dialog
+        dialoguePanel.setPreferredSize(new Dimension(1100, 140));
         dialoguePanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         dialogueText = new JLabel("...");
@@ -177,9 +168,8 @@ public class GameGUI extends JFrame {
         });
         
         dialoguePanel.setVisible(false); 
-        dialogLayer.add(dialoguePanel, BorderLayout.SOUTH); // Nempel di bawah layar tengah
+        dialogLayer.add(dialoguePanel, BorderLayout.SOUTH); 
         
-        // 2. Layer Ruangan (Di Bawah Dialog)
         roomCardLayout = new CardLayout();
         roomPanel = new JPanel(roomCardLayout);
         roomPanel.add(createDiningRoom(), "DiningRoom");
@@ -187,13 +177,11 @@ public class GameGUI extends JFrame {
         roomPanel.add(createSupplierRoom(), "SupplierRoom");
         roomPanel.add(createAmuletRoom(), "AmuletRoom");
         
-        // Memasukkan layer ke Overlay (Urutan menentukan Z-Index: 0 paling atas)
         centerOverlay.add(dialogLayer);
         centerOverlay.add(roomPanel);
         
         gamePanel.add(centerOverlay, BorderLayout.CENTER);
         
-        // --- SOUTH (Hanya Tombol Kontrol Bawah) ---
         JPanel controls = new JPanel(new BorderLayout());
         navPanel = new JPanel();
         
@@ -248,7 +236,6 @@ public class GameGUI extends JFrame {
         
         tableGridPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 30));
         tableGridPanel.setOpaque(false); 
-        // POSISI MEJA DITURUNKAN KE BAWAH (Margin atas 220px)
         tableGridPanel.setBorder(BorderFactory.createEmptyBorder(220, 20, 20, 20)); 
         
         diningBgPanel.add(tableGridPanel, BorderLayout.CENTER);
@@ -592,7 +579,6 @@ private void updateTableVisuals() {
 
     int totalCapacity = engine.getRestaurant().getCapacity();
 
-    // BACA LANGSUNG DARI ENGINE, bukan dari currentOccupiedSeats
     int occupied = 0;
     for (Customer c : engine.getRestaurant().getDiningArea().getCustomers()) {
         occupied += c.getCapacityNeeded();
@@ -622,7 +608,6 @@ private void updateTableVisuals() {
         bottomChairs.setOpaque(false);
 
         for (int i = 0; i < seatsForThisTable; i++) {
-            // PERBAIKAN — cek per kursi dengan index yang benar
             boolean isOccupied = (seatsProcessed + i) < occupied;
 
             if (i % 2 == 0) {
@@ -632,7 +617,6 @@ private void updateTableVisuals() {
             }
         }
 
-        // PERBAIKAN — increment setelah loop selesai
         seatsProcessed += seatsForThisTable;
 
         groupPanel.add(topChairs, BorderLayout.NORTH);
@@ -687,12 +671,12 @@ private void updateTableVisuals() {
 
     private void showNextMessage() {
         if (messageQueue.isEmpty()) {
-            dialoguePanel.setVisible(false); // Hilang 100% dan background melar bebas
+            dialoguePanel.setVisible(false);
             setUIEnabled(true); 
             updateActionButtons(); 
         } else {
             setUIEnabled(false); 
-            dialoguePanel.setVisible(true); // Melayang di atas background
+            dialoguePanel.setVisible(true);
             
             String line = messageQueue.poll();
             dialogueText.setText("<html>" + line + "</html>");
@@ -702,19 +686,14 @@ private void updateTableVisuals() {
     }
 
     private void triggerVisualEventsSync(String line) {
-        // --- 1. RESET KE KONDISI NORMAL ---
-        // Setiap kali ada pesan baru, kita kembalikan semua ke kondisi standar dulu
         diningBgPanel.setImage("Aset/tempatMakan.png"); 
         kitchenBgPanel.setImage("Aset/kitchen.png");
-        tableGridPanel.setVisible(true); // Meja wajib muncul di kondisi normal
+        tableGridPanel.setVisible(true);
         
-        // Jaga agar kamera tidak pindah-pindah jika di toko
         if (!currentRoom.equals("SupplierRoom") && !currentRoom.equals("AmuletRoom")) {
             changeRoom("DiningRoom"); 
         }
-
-        // --- 2. CEK KONDISI BENCANA / EVENT SPESIAL ---
-
+        
         Matcher m = Pattern.compile("Membutuhkan (\\d+) kursi").matcher(line);
         if (m.find()) {
             int groupSize = Integer.parseInt(m.group(1));
@@ -727,11 +706,10 @@ private void updateTableVisuals() {
             kitchenBgPanel.setImage("Aset/TikusNyerang.png");
         }
         
-        // DI SINI PERBAIKANNYA
         if (line.contains("PELANGGAN KABUR") || line.contains("beberapa pelanggan bersiap untuk kabur") || line.contains("Pelanggan kabur tidak mau membayar")) {
             changeRoom("DiningRoom");
-            diningBgPanel.setImage("Aset/OrangKabur.png"); // Ganti background bencana
-            tableGridPanel.setVisible(false); // <--- SEMBUNYIKAN SEMUA MEJA & KURSI
+            diningBgPanel.setImage("Aset/OrangKabur.png");
+            tableGridPanel.setVisible(false);
         }
 
         if (line.contains("Tidak cukup tempat")) {
