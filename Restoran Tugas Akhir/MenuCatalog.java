@@ -71,35 +71,6 @@ private void initCatalog() {
           }
      }
 
-    public String setMenuPrice(int menuIndex, double newPrice) {
-        Menu m = menuCatalog.getMenuByChoice(menuIndex + 1);
-        if (m == null) {
-            return "Menu tidak ditemukan.";
-        }
-    
-        // hitung total harga bahan baku menu tersebut
-        double totalIngredientCost = 0;
-        Ingredient[] ingredients = m.getIngredients();
-        int[] quantities = m.getQuantities();
-        for (int i = 0; i < ingredients.length; i++) {
-            totalIngredientCost += ingredients[i].getPrice() * quantities[i];
-        }
-    
-        // peringatan jika harga lebih murah dari modal
-        if (newPrice < totalIngredientCost) {
-            m.setPrice(newPrice);
-            return "PERINGATAN! Harga " + m.getName() + " ($" + String.format("%.2f", newPrice)
-                + ") lebih murah dari modal ($" + String.format("%.2f", totalIngredientCost)
-                + "). Anda akan rugi!";
-        }
-    
-        m.setPrice(newPrice);
-        return "Harga " + m.getName() + " berhasil diubah menjadi $"
-            + String.format("%.2f", newPrice)
-            + ". Estimasi profit per porsi: $"
-            + String.format("%.2f", newPrice - totalIngredientCost);
-    }
-
 
      public Menu getMenuByChoice(int choice) {
           int index = choice - 1; 
