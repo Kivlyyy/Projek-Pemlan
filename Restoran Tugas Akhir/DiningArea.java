@@ -57,16 +57,22 @@ public boolean admitCustomer(Customer customer) throws CapacityFullException {
                double customerBill = 0;
                List<Menu> orders = customer.getOrders();
                
-               for (int i = 0; i < orders.size(); i++) {
-                    Menu m = orders.get(i);
-                    try {
-                         kitchen.cook(m);
-                         customerBill += m.getPrice();
-                    } catch (OutOfStockException e) {
-                         System.out.println(e.getMessage());
-                         customer.handleOutOfStock(m, availableMenus);
-                    }
-               }
+List<Menu> finalOrders = new ArrayList<>(customer.getOrders());
+for (Menu m : finalOrders) {
+    try {
+        kitchen.cook(m);
+        customerBill += m.getPrice();
+    } catch (OutOfStockException e) {
+        Menu replacement = customer.handleOutOfStock(m, availableMenus);
+        if (replacement != null) {
+            try {
+                kitchen.cook(replacement);
+                customerBill += replacement.getPrice();
+            } catch (OutOfStockException e2) {
+            }
+        }
+    }
+}
 
                if (customerBill > 0) {
                     double payment = customer.pay(); 
@@ -81,7 +87,7 @@ public boolean admitCustomer(Customer customer) throws CapacityFullException {
 
                     restaurant.addMoney(payment);
                     totalIncome += payment;
-                    System.out.println("💰 Pelanggan membayar: $" + String.format("%.2f", payment));
+                    System.out.println("Pelanggan membayar: $" + String.format("%.2f", payment));
                }
           }
           System.out.println("---------------------------------");
