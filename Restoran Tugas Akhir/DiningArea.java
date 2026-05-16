@@ -64,7 +64,7 @@ public boolean admitCustomer(Customer customer) throws CapacityFullException {
                          customerBill += m.getPrice();
                     } catch (OutOfStockException e) {
                          System.out.println(e.getMessage());
-                         customer.handleOutOfStock(m);
+                         customer.handleOutOfStock(m, availableMenus);
                     }
                }
 
