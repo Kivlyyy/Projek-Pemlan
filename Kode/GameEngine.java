@@ -134,10 +134,6 @@ public class GameEngine {
                + ". Uang tersisa: Rp." + String.format("%.2f", restaurant.getMoney());
      }
 
-     // ============================================================
-     // FASE BERJUALAN (ALUR VISUAL NOVEL DIPERBAIKI)
-     // ============================================================
-
      private void runSellingPhase() {
           List<Customer> incomingCustomers = generateCustomers();
           DiningArea diningArea = restaurant.getDiningArea();
@@ -145,7 +141,6 @@ public class GameEngine {
 
           double startMoney = restaurant.getMoney();
           
-          // 1. Silent Admit: Tentukan siapa yang dapat kursi secara diam-diam (agar Bencana bisa deteksi)
           diningArea.clearCustomers();
           int occupied = 0;
           List<Customer> admitted = new ArrayList<>();
@@ -153,23 +148,20 @@ public class GameEngine {
                if (occupied + c.getCapacityNeeded() <= restaurant.getCapacity()) {
                     admitted.add(c);
                     occupied += c.getCapacityNeeded();
-               } else {
+               } 
+               else {
                     break;
                }
           }
           diningArea.getCustomers().addAll(admitted);
 
-          // 2. Trigger Bencana (Tikus mencuri bahan ATAU Pelanggan ditandai mau kabur)
           triggerDisasters(); 
 
-          // 3. Eksekusi Cetak Dialog Sesuai Urutan Visual Novel (Duduk -> Pesan -> Bayar/Kabur)
           for (Customer c : admitted) {
-               // Sengaja kita cetak manual di sini biar alurnya rapi per pelanggan
                System.out.println("Pelanggan dipersilakan duduk. Membutuhkan " + c.getCapacityNeeded() + " kursi.");
                diningArea.processSingleCustomerOrder(restaurant, c, availableMenus);
           }
           
-          // 4. Print pelanggan yang ditolak (Jika rombongan lebih besar dari sisa kapasitas)
           if (admitted.size() < incomingCustomers.size()) {
                System.out.println("Tidak cukup tempat untuk rombongan selanjutnya.");
                System.out.println("Tidak cukup tempat! Kapasitas Penuh!");
