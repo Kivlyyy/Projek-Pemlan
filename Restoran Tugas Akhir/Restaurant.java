@@ -25,6 +25,15 @@ public class Restaurant {
           this.diningArea.updateCapacity(this.capacity);
      }
 
+     public void setMoney(double money) {
+    this.money = money;
+}
+
+public void setCapacity(int capacity) {
+    this.capacity = capacity;
+    this.diningArea.updateCapacity(capacity);
+}
+
      public void addAmulet(Amulet amulet) {
           activeAmulets.add(amulet);
      }
