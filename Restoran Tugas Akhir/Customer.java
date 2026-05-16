@@ -21,24 +21,30 @@ public class Customer {
           this.tipPercentage = rand.nextDouble() * 5.0; 
      }
 
-     public void makeOrder(List<Menu> availableMenus) {
-          if (availableMenus.isEmpty()) {
-               System.out.println("Rombongan " + groupSize + " orang bingung karena tidak ada menu yang tersedia.");
-               return;
-          }
-
-          Random rand = new Random();
-          int numberOfOrders = this.groupSize + rand.nextInt(3); 
-          
-          System.out.println("Rombongan " + groupSize + " orang sedang memilih menu...");
-          
-          for (int i = 0; i < numberOfOrders; i++) {
-               Menu selectedMenu = availableMenus.get(rand.nextInt(availableMenus.size()));
-               
-               orders.add(selectedMenu);
-               System.out.println("Memesan: " + selectedMenu.getName());
-          }
-     }
+    public void makeOrder(List<Menu> availableMenus) {
+        if (availableMenus.isEmpty()) return;
+    
+        Random rand = new Random();
+        int numberOfOrders = this.capacityNeeded + rand.nextInt(3);
+    
+        for (int i = 0; i < numberOfOrders; i++) {
+            Menu selectedMenu = availableMenus.get(rand.nextInt(availableMenus.size()));
+    
+            // hitung threshold harga — pelanggan punya batas toleransi harga
+            double priceThreshold = 10000 + rand.nextDouble() * 20000; // toleransi 10rb-30rb
+    
+            if (selectedMenu.getPrice() <= priceThreshold) {
+                // harga terjangkau — langsung pesan
+                orders.add(selectedMenu);
+            } else {
+                // harga terlalu mahal — 30% kemungkinan tetap pesan, 70% skip
+                if (rand.nextDouble() < 0.30) {
+                    orders.add(selectedMenu);
+                }
+                // jika skip, tidak memesan menu ini
+            }
+        }
+    }
 
     public void handleOutOfStock(Menu menu, List<Menu> availableMenus) {
         orders.remove(menu);
