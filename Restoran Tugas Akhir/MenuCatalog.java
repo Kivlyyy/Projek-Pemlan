@@ -9,6 +9,14 @@ public class MenuCatalog {
           initCatalog();
      }
 
+    public Menu[] getMenuList() {
+        return menuList;
+    }
+    
+    public int getMenuCount() {
+        return menuCount;
+    }
+
 private void initCatalog() {
      Ingredient bread = new Ingredient("Bread", 3000);
      Ingredient egg = new Ingredient("Egg", 2000);
