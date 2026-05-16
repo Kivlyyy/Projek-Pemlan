@@ -30,18 +30,15 @@ public class Customer {
         for (int i = 0; i < numberOfOrders; i++) {
             Menu selectedMenu = availableMenus.get(rand.nextInt(availableMenus.size()));
     
-            // hitung threshold harga — pelanggan punya batas toleransi harga
-            double priceThreshold = 10000 + rand.nextDouble() * 20000; // toleransi 10rb-30rb
+            double priceThreshold = 10000 + rand.nextDouble() * 25000;
     
             if (selectedMenu.getPrice() <= priceThreshold) {
-                // harga terjangkau — langsung pesan
                 orders.add(selectedMenu);
-            } else {
-                // harga terlalu mahal — 30% kemungkinan tetap pesan, 70% skip
+            } 
+            else {
                 if (rand.nextDouble() < 0.30) {
                     orders.add(selectedMenu);
                 }
-                // jika skip, tidak memesan menu ini
             }
         }
     }
@@ -51,12 +48,11 @@ public class Customer {
         Random rand = new Random();
     
         if (rand.nextBoolean()) {
-            // pelanggan pergi, tidak ganti menu
             System.out.println("Pelanggan kecewa dan membatalkan pesanan " + menu.getName());
-        } else {
-            // pelanggan mau ganti menu lain yang tersedia
+        } 
+        else {
             List<Menu> otherMenus = new ArrayList<>(availableMenus);
-            otherMenus.remove(menu); // hapus menu yang habis dari pilihan
+            otherMenus.remove(menu);
     
             if (!otherMenus.isEmpty()) {
                 Menu replacement = otherMenus.get(rand.nextInt(otherMenus.size()));
